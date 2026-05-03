@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { wcGet, derivePole } from "../_wc.js";
+import { wcGet, derivePole } from "../_wc";
 
 const ICONS: Record<string, string> = {
   hydratation: "💧", "anti-age": "✨", énergie: "⚡", stress: "🧘",

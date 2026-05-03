@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { wcPost } from "../_wc.js";
+import { wcPost } from "../_wc";
 
 function reference(): string {
   const d = new Date();

@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { wcGet, mapProduct, derivePole } from "../_wc.js";
+import { wcGet, mapProduct, derivePole } from "../_wc";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
