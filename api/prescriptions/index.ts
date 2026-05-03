@@ -18,22 +18,52 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const ref = reference();
   const estimatedReady = new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
 
+  // Determine file type for display
+  const isImage = fileDataUrl.startsWith("data:image");
+  const isPdf = fileDataUrl.startsWith("data:application/pdf");
+  const fileType = isPdf ? "PDF" : isImage ? "Image" : "Fichier";
+  const fileSize = Math.round((fileDataUrl.length * 3) / 4 / 1024);
+
+  const note = [
+    `ORDONNANCE — Réf: ${ref}`,
+    `Patient : ${patientName}`,
+    `Téléphone : ${phone}`,
+    notes ? `Note : ${notes}` : null,
+    `Fichier joint : ${fileType} (~${fileSize} ko)`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  type WcOrder = { id: number; status: string };
+
+  let order: WcOrder | null = null;
   try {
-    await wcPost("/orders", {
+    order = await wcPost<WcOrder>("/orders", {
       status: "pending",
-      billing: { first_name: patientName, phone },
-      customer_note: `ORDONNANCE — Réf: ${ref}\nPatient: ${patientName}\nTél: ${phone}${notes ? `\nNote: ${notes}` : ""}\n[Fichier joint en base64]`,
+      billing: {
+        first_name: patientName.split(" ")[0] || patientName,
+        last_name: patientName.split(" ").slice(1).join(" ") || "-",
+        phone,
+        email: `ordonnance+${ref.toLowerCase()}@pharmacie-alger.dz`,
+        address_1: "Ordonnance en ligne",
+        city: "Alger",
+        country: "DZ",
+      },
+      customer_note: note,
       meta_data: [
         { key: "_prescription_ref", value: ref },
-        { key: "_prescription_file", value: fileDataUrl.substring(0, 200) },
+        { key: "_prescription_phone", value: phone },
+        { key: "_prescription_file_type", value: fileType },
+        { key: "_prescription_file_size_kb", value: String(fileSize) },
+        { key: "_prescription_file_b64", value: fileDataUrl },
       ],
     });
-  } catch {
-    // Commande WC optionnelle — on répond quand même avec succès
+  } catch (e) {
+    console.error("WC order creation failed:", e);
   }
 
   res.status(201).json({
-    id: Math.floor(Math.random() * 10000),
+    id: order?.id ?? 0,
     reference: ref,
     status: "pending",
     message:
