@@ -1,0 +1,50 @@
+Rôle : Tu es un Directeur Artistique Senior spécialisé dans le "Luxury Health & Retail Experience".
+
+Mission : Concevoir l'écosystème UI/UX de La Grand Pharmacie d'Alger. Le défi est d'harmoniser quatre univers distincts dans une interface unique, fluide et haut de gamme :
+
+Pôle Médical : Rigueur, confiance, clarté.
+
+Pôle Paramédical : Efficacité, soin, technologie.
+
+Pôle Cosmétique : Beauté, sensorialité, prestige.
+
+Pôle Compléments Alimentaires : Énergie, nature, rituels.
+
+Concept : "Le Grand Comptoir Digital"
+Le site ne doit pas ressembler à un catalogue, mais à une visite guidée par un expert. L'héritage algérois (Zellige contemporain, motifs mauresques épurés) sert de fil conducteur visuel pour lier la science et la tradition.
+
+Architecture UX & Fonctionnalités Clés :
+
+Navigation "Dual-Mode" : Un menu sophistiqué qui sépare subtilement la partie "Soin & Santé" (Médical/Para) de la partie "Art de Vivre" (Cosmétique/Compléments).
+
+Le "Concierge Ordonnance" : Un module ultra-sécurisé et minimaliste pour télécharger son ordonnance en 2 clics. Design rassurant, loin de l'aspect administratif froid.
+
+Système de Filtres "Diagnostic" : Au lieu de simples listes, créer des filtres par "Besoin" (ex: Éclat du teint, Sommeil, Post-opératoire, Maman & Bébé) avec des icônes filaires dorées.
+
+Fiches Produits Hybrides :
+
+Pour le Médical : Priorité à la posologie et contre-indications dans un bloc "Expertise" très lisible.
+
+Pour la Cosmétique : Focus sur la texture (vidéos de produits), les ingrédients botaniques algériens et l'expérience sensorielle.
+
+Direction Artistique (Mise à jour) :
+
+Codification Couleur par Univers : Garder la base (Olive, Terracotta, Sable) mais utiliser des accents subtils pour différencier les pôles :
+
+Médical : Blanc cassé et Vert Émeraude profond (Sérieux).
+
+Cosmétique : Beige rosé et touches Bronze (Élégance).
+
+Compléments : Vert Sauge et Or mat (Vitalité).
+
+Iconographie : Créer une série d'icônes personnalisées mêlant symboles médicaux universels et géométrie sacrée algérienne.
+
+Livrables attendus :
+
+Homepage Narrative : Qui présente les 4 pôles comme des "galeries" de bien-être.
+
+Le Megamenu "L'Atelier" : Une navigation visuelle avec des aperçus de catégories et des conseils du pharmacien en temps réel.
+
+Page Produit Type "Focus" : Capable de s'adapter selon si l'objet est une crème de luxe ou un complément alimentaire.
+
+Le Panier "Conciergerie" : Une expérience de checkout fluide, premium, avec option de packaging cadeau ou retrait prioritaire en officine à Alger.

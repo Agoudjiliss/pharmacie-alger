@@ -1,0 +1,439 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: La Grand Pharmacie d'Alger API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: products
+    description: Product catalog
+  - name: categories
+    description: Categories and poles
+  - name: cart
+    description: Shopping cart
+  - name: prescriptions
+    description: Prescription upload
+  - name: catalog
+    description: Catalog aggregates and summaries
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /products:
+    get:
+      operationId: listProducts
+      tags: [products]
+      summary: List products with optional filters
+      parameters:
+        - name: pole
+          in: query
+          schema:
+            type: string
+            enum: [medical, paramedical, cosmetique, supplements]
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: besoin
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: featured
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 24
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: List of products
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductListResponse"
+
+  /products/{id}:
+    get:
+      operationId: getProduct
+      tags: [products]
+      summary: Get product by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Product details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "404":
+          description: Product not found
+
+  /categories:
+    get:
+      operationId: listCategories
+      tags: [categories]
+      summary: List categories, optionally filtered by pole
+      parameters:
+        - name: pole
+          in: query
+          schema:
+            type: string
+            enum: [medical, paramedical, cosmetique, supplements]
+      responses:
+        "200":
+          description: List of categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+
+  /catalog/summary:
+    get:
+      operationId: getCatalogSummary
+      tags: [catalog]
+      summary: Homepage summary — product counts per pole, featured products, besoins
+      responses:
+        "200":
+          description: Catalog summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CatalogSummary"
+
+  /catalog/featured:
+    get:
+      operationId: getFeaturedProducts
+      tags: [catalog]
+      summary: Featured / spotlight products for homepage galleries
+      parameters:
+        - name: pole
+          in: query
+          schema:
+            type: string
+            enum: [medical, paramedical, cosmetique, supplements]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 6
+      responses:
+        "200":
+          description: Featured products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+
+  /catalog/besoins:
+    get:
+      operationId: listBesoins
+      tags: [catalog]
+      summary: List all besoin filters with product counts
+      responses:
+        "200":
+          description: List of besoins
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Besoin"
+
+  /cart:
+    get:
+      operationId: getCart
+      tags: [cart]
+      summary: Get current cart contents
+      parameters:
+        - name: sessionId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Cart contents
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+
+    post:
+      operationId: addToCart
+      tags: [cart]
+      summary: Add item to cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddToCartBody"
+      responses:
+        "200":
+          description: Updated cart
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+
+  /cart/{itemId}:
+    delete:
+      operationId: removeFromCart
+      tags: [cart]
+      summary: Remove item from cart
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Updated cart
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+
+  /prescriptions:
+    post:
+      operationId: uploadPrescription
+      tags: [prescriptions]
+      summary: Upload an ordonnance (prescription)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadPrescriptionBody"
+      responses:
+        "201":
+          description: Prescription submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PrescriptionConfirmation"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        pole:
+          type: string
+          enum: [medical, paramedical, cosmetique, supplements]
+        category:
+          type: string
+        besoin:
+          type: string
+        price:
+          type: number
+        imageUrl:
+          type: string
+        ingredients:
+          type: string
+        posologie:
+          type: string
+        contreIndications:
+          type: string
+        texture:
+          type: string
+        origin:
+          type: string
+        isFeatured:
+          type: boolean
+        inStock:
+          type: boolean
+        badge:
+          type: string
+      required: [id, name, pole, category, price, isFeatured, inStock]
+
+    ProductListResponse:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: "#/components/schemas/Product"
+        total:
+          type: integer
+        offset:
+          type: integer
+        limit:
+          type: integer
+      required: [products, total, offset, limit]
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        pole:
+          type: string
+          enum: [medical, paramedical, cosmetique, supplements]
+        productCount:
+          type: integer
+      required: [id, name, slug, pole, productCount]
+
+    CatalogSummary:
+      type: object
+      properties:
+        totalProducts:
+          type: integer
+        poleCounts:
+          type: object
+          additionalProperties:
+            type: integer
+        featuredBesoins:
+          type: array
+          items:
+            $ref: "#/components/schemas/Besoin"
+        newArrivals:
+          type: array
+          items:
+            $ref: "#/components/schemas/Product"
+      required: [totalProducts, poleCounts, featuredBesoins, newArrivals]
+
+    Besoin:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        pole:
+          type: string
+        productCount:
+          type: integer
+        icon:
+          type: string
+      required: [id, name, slug, productCount]
+
+    Cart:
+      type: object
+      properties:
+        sessionId:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CartItem"
+        total:
+          type: number
+        itemCount:
+          type: integer
+      required: [sessionId, items, total, itemCount]
+
+    CartItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        productId:
+          type: integer
+        productName:
+          type: string
+        productImageUrl:
+          type: string
+        pole:
+          type: string
+        price:
+          type: number
+        quantity:
+          type: integer
+      required: [id, productId, productName, pole, price, quantity]
+
+    AddToCartBody:
+      type: object
+      properties:
+        sessionId:
+          type: string
+        productId:
+          type: integer
+        quantity:
+          type: integer
+      required: [sessionId, productId, quantity]
+
+    UploadPrescriptionBody:
+      type: object
+      properties:
+        patientName:
+          type: string
+        phone:
+          type: string
+        fileDataUrl:
+          type: string
+        notes:
+          type: string
+      required: [patientName, phone, fileDataUrl]
+
+    PrescriptionConfirmation:
+      type: object
+      properties:
+        id:
+          type: integer
+        reference:
+          type: string
+        status:
+          type: string
+        message:
+          type: string
+        estimatedReady:
+          type: string
+      required: [id, reference, status, message]
