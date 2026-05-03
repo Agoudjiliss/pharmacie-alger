@@ -1,0 +1,9 @@
+{
+  "buildCommand": "node_modules/.bin/tsc --build --force && cd artifacts/pharmacie-alger && pnpm build",
+  "outputDirectory": "artifacts/pharmacie-alger/dist/public",
+  "installCommand": "pnpm install",
+  "framework": null,
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
