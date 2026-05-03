@@ -41,7 +41,7 @@ export async function wcPost<T>(path: string, body: unknown): Promise<T> {
 
 const POLE_MAP: Record<string, string> = {
   medical: "medical", médical: "medical", médicament: "medical", medicament: "medical",
-  paramedical: "paramedical", paramédical: "paramedical", "paramedical": "paramedical",
+  paramedical: "paramedical", paramédical: "paramedical", "para-médical": "paramedical",
   cosmetique: "cosmetique", cosmétique: "cosmetique", beaute: "cosmetique", beauté: "cosmetique",
   complements: "supplements", compléments: "supplements", nutrition: "supplements",
   "compléments alimentaires": "supplements",
