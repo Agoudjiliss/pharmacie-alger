@@ -2,9 +2,8 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trash2, ShoppingBag, Gift, MapPin, Truck, ArrowRight, Package } from "lucide-react";
-import { useGetCart, useRemoveFromCart } from "@workspace/api-client-react";
+import { useCart, useRemoveFromCart } from "@/hooks/useCart";
 import { poleConfig, type Pole } from "@/lib/poleConfig";
-import { getSessionId } from "@/lib/cart";
 
 const deliveryOptions = [
   { id: "standard", label: "Livraison standard", desc: "2-3 jours ouvrés, Alger", icon: Truck, price: 0 },
@@ -13,14 +12,15 @@ const deliveryOptions = [
 ];
 
 export default function CartPage() {
-  const sessionId = getSessionId();
-  const { data: cart, isLoading } = useGetCart({ sessionId });
+  const cart = useCart();
   const removeItem = useRemoveFromCart();
   const [delivery, setDelivery] = useState("retrait");
 
   const handleRemove = (itemId: number) => {
-    removeItem.mutate({ itemId });
+    removeItem.mutate(itemId);
   };
+
+  const isLoading = false;
 
   const deliveryPrice = deliveryOptions.find((d) => d.id === delivery)?.price ?? 0;
   const total = (cart?.total ?? 0) + deliveryPrice;
@@ -36,7 +36,7 @@ export default function CartPage() {
     );
   }
 
-  const isEmpty = !cart || cart.items.length === 0;
+  const isEmpty = cart.items.length === 0;
 
   return (
     <div className="min-h-screen">

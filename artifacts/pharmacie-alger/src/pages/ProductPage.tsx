@@ -1,16 +1,15 @@
 import { useRoute, Link } from "wouter";
 import { motion } from "framer-motion";
 import { ArrowLeft, ShoppingBag, CheckCircle, AlertTriangle, Leaf, Stethoscope } from "lucide-react";
-import { useGetProduct, useAddToCart } from "@workspace/api-client-react";
+import { useGetProduct } from "@workspace/api-client-react";
+import { useAddToCart } from "@/hooks/useCart";
 import { poleConfig, type Pole } from "@/lib/poleConfig";
-import { getSessionId } from "@/lib/cart";
 
 export default function ProductPage() {
   const [, params] = useRoute("/produit/:id");
   const id = Number(params?.id);
   const { data: product, isLoading, error } = useGetProduct(id);
   const addToCart = useAddToCart();
-  const sessionId = getSessionId();
 
   if (isLoading) {
     return (
@@ -47,7 +46,14 @@ export default function ProductPage() {
   const isCosmetique = pole === "cosmetique";
 
   const handleAddToCart = () => {
-    addToCart.mutate({ data: { sessionId, productId: product.id, quantity: 1 } });
+    addToCart.mutate({
+      productId: product.id,
+      quantity: 1,
+      productName: product.name,
+      productImageUrl: product.imageUrl ?? null,
+      pole: product.pole,
+      price: product.price,
+    });
   };
 
   return (

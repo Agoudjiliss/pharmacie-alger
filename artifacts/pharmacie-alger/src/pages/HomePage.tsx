@@ -6,11 +6,11 @@ import {
   useGetCatalogSummary,
   useGetFeaturedProducts,
   useListBesoins,
-  useAddToCart,
 } from "@workspace/api-client-react";
+import { useAddToCart } from "@/hooks/useCart";
 import ProductCard from "@/components/ProductCard";
 import { poleConfig, type Pole } from "@/lib/poleConfig";
-import { getSessionId } from "@/lib/cart";
+import type { Product } from "@workspace/api-client-react";
 
 const poleIcons = {
   medical: Stethoscope,
@@ -29,7 +29,6 @@ const poleHrefs: Record<Pole, string> = {
 const poles: Pole[] = ["medical", "paramedical", "cosmetique", "supplements"];
 
 export default function HomePage() {
-  const sessionId = getSessionId();
   const { data: summary } = useGetCatalogSummary();
   const { data: featuredMedical } = useGetFeaturedProducts({ pole: "medical", limit: 3 });
   const { data: featuredCosmetique } = useGetFeaturedProducts({ pole: "cosmetique", limit: 3 });
@@ -38,8 +37,15 @@ export default function HomePage() {
   const { data: besoins } = useListBesoins();
   const addToCart = useAddToCart();
 
-  const handleAddToCart = (productId: number) => {
-    addToCart.mutate({ data: { sessionId, productId, quantity: 1 } });
+  const handleAddToCart = (product: Product) => {
+    addToCart.mutate({
+      productId: product.id,
+      quantity: 1,
+      productName: product.name,
+      productImageUrl: product.imageUrl ?? null,
+      pole: product.pole,
+      price: product.price,
+    });
   };
 
   const featuredByPole: Record<Pole, typeof featuredMedical> = {
@@ -226,7 +232,7 @@ export default function HomePage() {
                   <ProductCard
                     key={p.id}
                     product={p}
-                    onAddToCart={handleAddToCart}
+                    onAddToCart={() => handleAddToCart(p)}
                     index={i}
                   />
                 ))}

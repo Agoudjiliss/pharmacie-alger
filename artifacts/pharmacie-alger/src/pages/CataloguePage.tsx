@@ -5,11 +5,11 @@ import { Search, X } from "lucide-react";
 import {
   useListProducts,
   useListBesoins,
-  useAddToCart,
+  type Product,
 } from "@workspace/api-client-react";
+import { useAddToCart } from "@/hooks/useCart";
 import ProductCard from "@/components/ProductCard";
 import { poleConfig, type Pole } from "@/lib/poleConfig";
-import { getSessionId } from "@/lib/cart";
 
 const poles: { value: Pole | ""; label: string }[] = [
   { value: "", label: "Tout" },
@@ -28,8 +28,6 @@ export default function CataloguePage() {
   const [selectedPole, setSelectedPole] = useState<Pole | "">(initialPole);
   const [selectedBesoin, setSelectedBesoin] = useState(initialBesoin);
   const [searchQ, setSearchQ] = useState("");
-  const sessionId = getSessionId();
-
   const { data: productsData, isLoading } = useListProducts({
     pole: selectedPole || undefined,
     besoin: selectedBesoin || undefined,
@@ -41,8 +39,15 @@ export default function CataloguePage() {
   const { data: besoins } = useListBesoins();
   const addToCart = useAddToCart();
 
-  const handleAddToCart = (productId: number) => {
-    addToCart.mutate({ data: { sessionId, productId, quantity: 1 } });
+  const handleAddToCart = (product: Product) => {
+    addToCart.mutate({
+      productId: product.id,
+      quantity: 1,
+      productName: product.name,
+      productImageUrl: product.imageUrl ?? null,
+      pole: product.pole,
+      price: product.price,
+    });
   };
 
   const products = productsData?.products || [];
@@ -153,7 +158,7 @@ export default function CataloguePage() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
                 {products.map((p, i) => (
-                  <ProductCard key={p.id} product={p} onAddToCart={handleAddToCart} index={i} />
+                  <ProductCard key={p.id} product={p} onAddToCart={() => handleAddToCart(p)} index={i} />
                 ))}
               </div>
             )}

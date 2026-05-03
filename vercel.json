@@ -4,10 +4,6 @@
   "installCommand": "corepack enable && pnpm install --frozen-lockfile",
   "framework": null,
   "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://lightslategray-dinosaur-220659.hostingersite.com/api/:path*"
-    },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }

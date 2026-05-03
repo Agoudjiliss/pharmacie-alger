@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag, Menu, X, ChevronDown, Phone } from "lucide-react";
-import { useGetCart } from "@workspace/api-client-react";
-import { getSessionId } from "@/lib/cart";
+import { useCart } from "@/hooks/useCart";
 
 const soigneSante = [
   { label: "Médical", href: "/catalogue?pole=medical", desc: "Médicaments & soins" },
@@ -18,10 +17,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [megaMenu, setMegaMenu] = useState<"soin" | "art" | null>(null);
   const [scrolled, setScrolled] = useState(false);
-  const [sessionId] = useState(() => getSessionId());
   const [location] = useLocation();
-
-  const { data: cart } = useGetCart({ sessionId });
+  const cart = useCart();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -33,7 +30,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     setMobileOpen(false);
   }, [location]);
 
-  const itemCount = cart?.itemCount ?? 0;
+  const itemCount = cart.itemCount;
 
   return (
     <div className="min-h-screen flex flex-col">
